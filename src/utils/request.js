@@ -1,0 +1,24 @@
+import axios from "axios";
+import store from "@/store/";
+const request = axios.create({
+  baseURL: "http://ttapi.research.itcast.cn"
+});
+request.interceptors.request.use(
+  function(config) {
+    // Do something before request is sent
+    const { user } = store.state;
+    // !user ? console.log("无user") : console.log("有user");
+    // 如果用户已登录，统一给接口设置 token 信息
+    if (user) {
+      config.headers.Authorization = `Bearer ${user}`;
+    }
+    // 处理完之后一定要把 config 返回，否则请求就会停在这里
+    return config;
+  },
+  function(error) {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
+export default request;
